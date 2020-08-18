@@ -9,7 +9,8 @@ module.exports = {
         network: "@/network",
         views: "@/views",
         services: "@/services",
-        store: "@/store"
+        store: "@/store",
+        utils: "@/utils"
       }
     }
   }

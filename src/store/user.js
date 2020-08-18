@@ -15,16 +15,21 @@ export default {
   },
   // 状态值的改变方法,操作状态值 提交mutations是更改Vuex状态的唯一方法
   mutations: {
-    getUserInfo(state, data) {
+    getUserInfo(state, { data, loginFlag }) {
+      // console.log(data, loginFlag);
       state.userInfo = data;
-      state.loginFlag = true;
-      sessionStorage.setItem("userInfo", JSON.stringify(data));
+      state.loginFlag = loginFlag;
+      if (data) {
+        sessionStorage.setItem("userInfo", JSON.stringify(data));
+      } else {
+        sessionStorage.removeItem("userInfo");
+      }
     }
   },
   // 要改变状态值只能通过提交mutations来完成
   actions: {
-    changeUserInfo({ commit }, data) {
-      commit("getUserInfo", data);
+    changeUserInfo({ commit }, { data, loginFlag = true }) {
+      commit("getUserInfo", { data, loginFlag });
     }
   }
 };

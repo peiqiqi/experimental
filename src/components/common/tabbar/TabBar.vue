@@ -32,8 +32,10 @@
           </span>
           <span>
             <span style="padding-left:20px" v-if="loginFlag">
-              {{ userInfo.user_name }}
+              <span> {{ userInfo.user_name }} </span>
+              <el-link type="info" @click="logout">登出</el-link>
             </span>
+
             <span v-else>
               <el-link type="info" @click="loginDialogVisible = true"
                 >登录</el-link
@@ -287,6 +289,12 @@ export default {
     }
   },
   methods: {
+    logout() {
+      this.$store.dispatch("changeUserInfo", {
+        data: null,
+        loginFlag: false
+      });
+    },
     //监听用户对话框的关闭事件
     addDialogClosed() {
       this.$refs.addFormRef.resetFields();
@@ -356,7 +364,7 @@ export default {
           return;
         }
         const { data, token } = res;
-        this.$store.dispatch("changeUserInfo", data);
+        this.$store.dispatch("changeUserInfo", { data: data });
         this.loginDialogVisible = false;
         window.sessionStorage.setItem("token", token);
       } catch (e) {
@@ -401,7 +409,7 @@ export default {
         const d = JSON.parse(JSON.stringify(this.userInfo));
         d.avatar = avatarUrl;
         console.log("d", d);
-        this.$store.dispatch("changeUserInfo", d);
+        this.$store.dispatch("changeUserInfo", { data: d });
       } catch (e) {
         console.log(e);
       }

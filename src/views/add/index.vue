@@ -6,10 +6,7 @@
           <el-input v-model="form.title"></el-input>
         </el-form-item>
         <el-form-item label="内容" prop="desc" required>
-          <el-input
-            type="textarea"
-            :rows="5"
-            v-model="form.desc"></el-input>
+          <el-input type="textarea" :rows="5" v-model="form.desc"></el-input>
         </el-form-item>
         <el-form-item>
           <el-button type="primary" @click="onSubmit(form)">立即发表</el-button>
@@ -20,36 +17,59 @@
 </template>
 
 <script>
-  export default {
-    data() {
-      return {
-        form: {
-          title: '',
-          desc: ''
+import { get, post, postForm, put } from "@/services/request";
+import urls from "@/services/urls";
+export default {
+  data() {
+    return {
+      form: {
+        title: "",
+        desc: ""
+      },
+      rules: {
+        title: {
+          required: true,
+          message: "请输入标题"
         },
-        rules: {
-          title: {
-            required: true,
-            message: '请输入标题'
-          },
-          desc: {
-            required: true,
-            message: '请输入内容'
-          }
+        desc: {
+          required: true,
+          message: "请输入内容"
         }
       }
-    },
-    methods: {
-      onSubmit(form) {
-        this.$refs.form.validate((valid) => {
-          if (valid) {
-            alert('发表成功!');
-          } else {
-            console.log('输入有误!!');
-            return false;
+    };
+  },
+  methods: {
+    async discussion_add() {
+      try {
+        const res = await post({
+          url: urls.discussion_add,
+          body: {
+            title: this.form.title,
+            content: this.form.desc
           }
         });
+        if (!res) {
+          return;
+        }
+        this.$message.success("发表成功!");
+        // this.form = {
+        //   title: "",
+        //   desc: ""
+        // };
+      } catch (e) {
+        console.log(e);
       }
+    },
+    onSubmit(form) {
+      this.$refs.form.validate(valid => {
+        if (valid) {
+          this.discussion_add();
+        } else {
+          console.log("输入有误!!");
+          return false;
+        }
+      });
     }
   }
+};
 </script>

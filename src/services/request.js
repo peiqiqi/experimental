@@ -25,13 +25,7 @@ const responseHandler = response => {
   }
   return Promise.reject(data);
 };
-/**
- *
- * @param {*} url string
- * @param {*} param object|null
- * @param {*} query object|null
- */
-export const get = ({ url = "", param = null, query = null }) => {
+const preHandler = ({ url, param, query }) => {
   // 将类似 `xxx/:id`=> `xxx/1`
   if (param) {
     Object.keys(param).forEach(key => {
@@ -45,12 +39,16 @@ export const get = ({ url = "", param = null, query = null }) => {
   if (query) {
     url = `${url}?${stringify(query)}`;
   }
-  //   let newOption = {};
-  //   if (options) {
-  //     newOption = _.merge({}, default_option, ...options);
-  //   } else {
-  //     newOption = default_option;
-  //   }
+  return url;
+};
+/**
+ *
+ * @param {*} url string
+ * @param {*} param object|null
+ * @param {*} query object|null
+ */
+export const get = ({ url = "", param = null, query = null }) => {
+  url = preHandler({ url, param, query });
   return axios.get(url, default_option).then(responseHandler);
 };
 // 新增
@@ -67,27 +65,7 @@ export const post = ({
   body = null,
   ...options
 }) => {
-  // 将类似 `xxx/:id`=> `xxx/1`
-  if (param) {
-    Object.keys(param).forEach(key => {
-      const reg = new RegExp(`:${key}`, "g");
-      const flag = reg.test(url);
-      if (flag) {
-        url = url.replace(`:${key}`, param[key]);
-      }
-    });
-  }
-  if (query) {
-    url = `${url}?${stringify(query)}`;
-  }
-  console.log(Object.prototype.toString.call(options));
-
-  // let newOption = {};
-  // if (options) {
-  //   newOption = _.merge({}, default_option, ...options);
-  // } else {
-  //   newOption = default_option;
-  // }
+  url = preHandler({ url, param, query });
   const newOption = default_option;
   return axios.post(url, body, newOption).then(responseHandler);
 };
@@ -99,26 +77,8 @@ export const put = ({
   body = null,
   ...options
 }) => {
-  // 将类似 `xxx/:id`=> `xxx/1`
-  if (param) {
-    Object.keys(param).forEach(key => {
-      const reg = new RegExp(`:${key}`, "g");
-      const flag = reg.test(url);
-      if (flag) {
-        url = url.replace(`:${key}`, param[key]);
-      }
-    });
-  }
-  if (query) {
-    url = `${url}?${stringify(query)}`;
-  }
-  // console.log(Object.prototype.toString.call(options));
-  // let newOption = {};
-  // if (options) {
-  //   newOption = _.merge({}, default_option, ...options);
-  // } else {
-  //   newOption = default_option;
-  // }
+  url = preHandler({ url, param, query });
+
   const newOption = default_option;
 
   return axios.put(url, body, newOption).then(responseHandler);
@@ -131,25 +91,8 @@ export const del = ({
   body = null,
   ...options
 }) => {
-  // 将类似 `xxx/:id`=> `xxx/1`
-  if (param) {
-    Object.keys(param).forEach(key => {
-      const reg = new RegExp(`:${key}`, "g");
-      const flag = reg.test(url);
-      if (flag) {
-        url = url.replace(`:${key}`, param[key]);
-      }
-    });
-  }
-  if (query) {
-    url = `${url}?${stringify(query)}`;
-  }
-  // let newOption = {};
-  // if (options) {
-  //   newOption = _.merge({}, default_option, ...options);
-  // } else {
-  //   newOption = default_option;
-  // }
+  url = preHandler({ url, param, query });
+
   const newOption = default_option;
 
   return axios.delete(url, body, newOption).then(responseHandler);
@@ -163,19 +106,7 @@ export const postForm = ({
   body = null,
   ...options
 }) => {
-  // 将类似 `xxx/:id`=> `xxx/1`
-  if (param) {
-    Object.keys(param).forEach(key => {
-      const reg = new RegExp(`:${key}`, "g");
-      const flag = reg.test(url);
-      if (flag) {
-        url = url.replace(`:${key}`, param[key]);
-      }
-    });
-  }
-  if (query) {
-    url = `${url}?${stringify(query)}`;
-  }
+  url = preHandler({ url, param, query });
   const formData = new FormData();
   if (body) {
     Object.keys(body).forEach(key => {
