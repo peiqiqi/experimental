@@ -3,28 +3,45 @@
     <el-col :span="12" :offset="6">
       <div class="grid-content bg-purple forum-div">
         <el-button type="primary" @click="toAdd">发表讨论</el-button>
-        <li v-for="item of discussions.list" :key="item.ID" class="u-forumli">
-          <div class="cnt">
-            <router-link
-              class="j-link"
-              :to="{ name: 'details', params: { pid: item.ID } }"
-              >{{ item.title }}</router-link
+        <div>
+          <div v-if="discussions.list && discussions.list.length">
+            <li
+              v-for="item of discussions.list"
+              :key="item.ID"
+              class="u-forumli"
             >
+              <div class="cnt">
+                <router-link
+                  class="j-link"
+                  :to="{ name: 'details', params: { pid: item.ID } }"
+                  >{{ item.title }}</router-link
+                >
+              </div>
+              <span>
+                <span class="userInfo" title="">{{ item.author }}</span>
+                <span class="lb10">{{ item.CreatedAt }} 发表</span>
+              </span>
+              <p class="reply">回复：{{ item.reply_count || 0 }}</p>
+            </li>
           </div>
-          <span>
-            <span class="userInfo" title="">{{ item.author }}</span>
-            <span class="lb10">{{ item.CreatedAt }} 发表</span>
-          </span>
-          <p class="reply">回复：{{ item.reply_count }}</p>
-        </li>
+          <div
+            v-if="discussions.list && discussions.list.length === 0"
+            style="display:flex;justify-content:center;align-items:center;min-height:100px"
+          >
+            当前还没有讨论数据哦
+          </div>
+        </div>
       </div>
-      <el-pagination
-        background
-        layout="prev, pager, next"
-        :page-size="10"
-        :total="discussions.total"
-      >
-      </el-pagination>
+      <div v-if="discussions.list && discussions.list.length">
+        <el-pagination
+          background
+          layout="prev, pager, next"
+          :page-size="size"
+          :total="discussions.total"
+          @current-change="handleCurrentChange"
+        >
+        </el-pagination>
+      </div>
     </el-col>
   </el-row>
 </template>
@@ -44,9 +61,11 @@ export default {
     // };
     return {
       discussions: {
-        list: [],
+        list: null,
         total: 0
-      }
+      },
+      curPage: 0,
+      size: 10
     };
   },
   mounted() {
@@ -66,7 +85,11 @@ export default {
     async discussion_list() {
       try {
         const res = await get({
-          url: urls.discussion_list
+          url: urls.discussion_list,
+          query: {
+            page: this.curPage,
+            page_size: this.size
+          }
         });
         if (!res) {
           return;
@@ -75,9 +98,14 @@ export default {
           item.CreatedAt = formatTime(new Date(item.CreatedAt));
         });
         this.discussions = res;
+        this.page = res.page;
       } catch (e) {
         console.log(e);
       }
+    },
+    handleCurrentChange(val) {
+      this.curPage = val;
+      this.discussion_list();
     }
   }
 };
@@ -107,7 +135,7 @@ export default {
     "sans-serif";
 }
 .u-forumli .j-link:hover {
-  color: #00ad4d;
+  color: #1890ff;
   text-decoration: none;
 }
 .userInfo {

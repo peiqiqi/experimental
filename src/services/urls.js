@@ -17,5 +17,8 @@ export default {
   // 讨论详情
   discussion_detail: `${front}/discussion/detail/:id`,
   // 讨论的回复
-  discussion_reply: `${front}/discussion/reply`
+  discussion_reply: `${front}/discussion/reply`,
+  courseware_tree: `${front}/courseware/tree`,
+  teacher: `${front}/teacher/list`,
+  work: `${front}/work/list`
 };

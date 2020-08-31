@@ -36,6 +36,7 @@
             </div>
           </div>
           <el-pagination
+            v-if="replyList.list && replyList.list.length"
             background
             layout="prev, pager, next"
             :page-size="10"

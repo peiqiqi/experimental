@@ -6,7 +6,7 @@
           <el-input v-model="form.title"></el-input>
         </el-form-item>
         <el-form-item label="内容" prop="desc" required>
-          <el-input type="textarea" :rows="5" v-model="form.desc"></el-input>
+          <el-input type="textarea" :rows="15" v-model="form.desc"></el-input>
         </el-form-item>
         <el-form-item>
           <el-button type="primary" @click="onSubmit(form)">立即发表</el-button>

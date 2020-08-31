@@ -114,6 +114,13 @@
             <el-input v-model="loginForm.password" show-password></el-input>
           </el-form-item>
         </el-form>
+        <div style="display:flex;justify-content:flex-end">
+          还没有账号？<a
+            style="color:#1890FF;cursor:pointer"
+            @click="toRegister"
+            >马上注册</a
+          >
+        </div>
         <!--底部按钮区域-->
         <span slot="footer" class="dialog-footer">
           <el-button @click="loginDialogVisible = false">取 消</el-button>
@@ -127,6 +134,8 @@
 <script>
 import { post, postForm, put } from "@/services/request";
 import urls from "@/services/urls";
+import event from "@/utils/event";
+
 export default {
   name: "tabbar",
   data() {
@@ -274,6 +283,9 @@ export default {
     };
   },
   mounted() {
+    event.on("show-login", () => {
+      this.loginDialogVisible = true;
+    });
     document.getElementById("avatar_upload").addEventListener("change", $ev => {
       console.log("change", $ev.target.files);
       this.fileObj = $ev.target.files[0];
@@ -289,6 +301,10 @@ export default {
     }
   },
   methods: {
+    toRegister() {
+      this.loginDialogVisible = false;
+      this.registDialogVisible = true;
+    },
     logout() {
       this.$store.dispatch("changeUserInfo", {
         data: null,

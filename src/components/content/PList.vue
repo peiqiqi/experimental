@@ -1,140 +1,147 @@
 <template>
   <el-container>
-    <el-aside width="300px" >
+    <el-aside width="300px">
       <el-menu
         text-color="black"
         :router="true"
         active-text-color="#ffd04b"
-        :default-active="active()" > <!--激活菜单颜色-->
-        <leftNav
-         :list="list"
-         ></leftNav>
+        :default-active="active"
+      >
+        <!--激活菜单颜色-->
+        <leftNav :list="list"></leftNav>
       </el-menu>
     </el-aside>
-    <el-main>
+    <div style="flex:1;padding:20px">
+      <Media :pdfUrl="pdfUrl" />
+    </div>
+    <!-- <el-main>
       <router-view></router-view>
-    </el-main>
+    </el-main> -->
   </el-container>
 </template>
 
 <script>
-  import leftNav from 'content/leftNav'
-  export default {
-    name: "PList",
-    data() {
-      return {
-        list: [{
-          index: '1',
-          icon: 'takeaway-box',
-          title: '理论课程',
-          children: [{
-            index: '2',
-            icon: 'data-analysis',
-            title: '第二章 资料的整理与描述',
-          },{
-            index: '3',
-            icon: 'data-analysis',
-            title: '第三章 常用概率分布',
-          },{
-            index: '4',
-            icon: 'notebook-1',
-            title: '第四章 统计假设测验',
-            children: [{
-              index: '41',
-              icon: 'data-analysis',
-              title: '统计的假设测验（1）',
-            },{
-              index: '42',
-              icon: 'data-analysis',
-              title: '统计的假设测验（2）',
-            }]
-          },{
-            index: '5',
-            icon: 'notebook-1',
-            title: '第五章 方差分析',
-            children: [{
-              index: '51',
-              title: '方差分析(1)',
-            },{
-              index: '52',
-              title: '方差分析(2)',
-            },{
-              index: '53',
-              title: '方差分析(3)',
-            },{
-              index: '54',
-              title: '方差分析(4)',
-            },]
-          },{
-            index: '6',
-            icon: 'data-analysis',
-            title: '第六章 卡方测验',
-          },{
-            index: '7',
-            icon: 'data-analysis',
-            title: '第七章 直线回归与相关分析',
-          },{
-            index: '10',
-            icon: 'data-analysis',
-            title: '第十章 章 试验资料的方差分析',
-          }]
-        },{
-          index: '11',
-          icon: 'menu',
-          title: '试验课',
-          children: [{
-            index: '111',
-            icon: 'el-icon-magic-stick',
-            title: '实验1 统计分析软件SAS的应用',
-          },{
-            index: '222',
-            icon: 'el-icon-magic-stick',
-            title: '实验2 R语言及其应用',
-          },{
-            index: '333',
-            icon: 'el-icon-magic-stick',
-            title: '实验3 R语言及其应用（2）',
-          },{
-            index: '444',
-            icon: 'el-icon-magic-stick',
-            title: '实验4 统计分析软件SAS的应用(2)',
-          }]
-        }]
-      }
-    },
-    components: {
-      leftNav
-    },
-    methods: {
-      active() {
-        if (this.$route.params.id) {
-          return this.$route.params.id.toString()
-        } else {
-          return '2'
+import leftNav from "content/leftNav";
+import Media from "content/Media";
+
+import { get, post, postForm, put } from "@/services/request";
+import urls from "@/services/urls";
+import event from "@/utils/event";
+
+export default {
+  name: "PList",
+  data() {
+    return {
+      list: [],
+      elicon: "el-icon-",
+      pdfUrl: "",
+      active: "0"
+    };
+  },
+  components: {
+    leftNav,
+    Media
+  },
+  mounted() {
+    this.courseware_tree();
+  },
+  methods: {
+    async courseware_tree() {
+      try {
+        const res = await get({
+          url: urls.courseware_tree
+        });
+        if (!res) {
+          return;
         }
+        var compare = function(x, y) {
+          if (x < y) {
+            return -1;
+          } else if (x > y) {
+            return 1;
+          } else {
+            return 0;
+          }
+        };
+        const digui = arr => {
+          return arr
+            .sort((a, b) => compare(a.ID, b.ID))
+            .map(item => {
+              if (item.children) {
+                return digui(item.children);
+              }
+              return item;
+            });
+        };
+        const list = res.filter(item => item.children.length);
+        list.forEach(item => {
+          if (item.children) {
+            digui(item.children);
+          }
+        });
+
+        this.list = list;
+        const temp_children = list[0].children;
+        const temp = temp_children[0].children
+          ? temp_children[0].children[0]
+          : temp_children[0];
+        this.pdfUrl = temp.url;
+        this.active = "" + temp.ID;
+        this.$router
+          .push({
+            name: "content",
+            params: {
+              id: temp.ID
+            }
+          })
+          .catch(err => {
+            err;
+          });
+        // this.form = {
+        //   title: "",
+        //   desc: ""
+        // };
+      } catch (e) {
+        console.log(e);
       }
-    },
-    created() {
-      this.$router.push({
-        name: 'content',
-        params: {
-          id: this.active()
-        },
-      }).catch(err => {err})
     }
+    // active() {
+    //   if (this.$route.params.id) {
+    //     return this.$route.params.id.toString();
+    //   } else {
+    //     return "4";
+    //   }
+    // }
+  },
+
+  created() {
+    event.on("menu-change", d => {
+      this.pdfUrl = d.url;
+      this.active = "" + d.ID;
+      this.$router
+        .push({
+          name: "content",
+          params: {
+            id: d.ID
+          }
+        })
+        .catch(err => {
+          err;
+        });
+    });
   }
+};
 </script>
 
 <style lang="less" scoped>
-  el-container{
-    height: 100%;
-  }
-  .el-aside{
-    margin-left: -20px;
-    background-color: #ffffff;
+el-container {
+  height: 100%;
+}
+.el-aside {
+  margin-left: -20px;
+  background-color: #ffffff;
   .el-menu {
     border-right: none;
-
   }
-  }
+}
 </style>

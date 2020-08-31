@@ -2,29 +2,47 @@ import axios from "axios";
 import { stringify } from "qs";
 import _ from "lodash";
 import { Message } from "element-ui";
+import event from "@/utils/event";
 
-const default_option = {
-  headers: {
-    "Content-Type": "application/json",
-    Authorization: `Bearer ${sessionStorage.getItem("token")}`
+const instance = axios.create({
+  timeout: 10000 // 设置请求超时连接时间
+});
+instance.interceptors.request.use(
+  config => {
+    // Do something before request is sent
+
+    config.headers.Authorization = `Bearer ${sessionStorage.getItem("token")}`; // 让每个请求携带token--['X-Token']为自定义key 请根据实际情况自行修改
+
+    return config;
+  },
+  error => {
+    // Do something with request error
+    console.log(error); // for debug
+    Promise.reject(error);
   }
-};
-// 统一处理响应
-const responseHandler = response => {
-  //   console.log(response);
-  const { data, status } = response;
-  if (status >= 200 && status < 400) {
-    return Promise.resolve(data.data);
+);
+instance.interceptors.response.use(
+  response => {
+    // console.log("======", response);
+    const { data, status } = response;
+    if (status >= 200 && status < 400) {
+      return Promise.resolve(data.data);
+    } else {
+      return Promise.reject("error");
+    }
+  },
+  error => {
+    const { status, data } = error.response;
+    Message.error(data.msg);
+    if (status === 401) {
+      // 登录
+      event.emit("show-login");
+    }
+
+    return Promise.reject(data);
   }
-  const { error, msg } = data;
-  // TODO 把错误提示弹出
-  Message.error(error);
-  // 401 是操作无权限，让用户去登录
-  if (status === 401) {
-    // TODO 让用户去登录
-  }
-  return Promise.reject(data);
-};
+);
+
 const preHandler = ({ url, param, query }) => {
   // 将类似 `xxx/:id`=> `xxx/1`
   if (param) {
@@ -49,7 +67,7 @@ const preHandler = ({ url, param, query }) => {
  */
 export const get = ({ url = "", param = null, query = null }) => {
   url = preHandler({ url, param, query });
-  return axios.get(url, default_option).then(responseHandler);
+  return instance.get(url);
 };
 // 新增
 /**
@@ -66,8 +84,7 @@ export const post = ({
   ...options
 }) => {
   url = preHandler({ url, param, query });
-  const newOption = default_option;
-  return axios.post(url, body, newOption).then(responseHandler);
+  return instance.post(url, body);
 };
 // 修改
 export const put = ({
@@ -79,9 +96,7 @@ export const put = ({
 }) => {
   url = preHandler({ url, param, query });
 
-  const newOption = default_option;
-
-  return axios.put(url, body, newOption).then(responseHandler);
+  return instance.put(url, body);
 };
 // 删除
 export const del = ({
@@ -93,9 +108,7 @@ export const del = ({
 }) => {
   url = preHandler({ url, param, query });
 
-  const newOption = default_option;
-
-  return axios.delete(url, body, newOption).then(responseHandler);
+  return instance.delete(url, body);
 };
 
 // form表单提交，主要是上传文件会用到
@@ -113,5 +126,5 @@ export const postForm = ({
       formData.append(key, body[key]);
     });
   }
-  return axios.post(url, formData).then(responseHandler);
+  return instance.post(url, formData);
 };

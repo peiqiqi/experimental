@@ -23,6 +23,7 @@ export default {
         sessionStorage.setItem("userInfo", JSON.stringify(data));
       } else {
         sessionStorage.removeItem("userInfo");
+        sessionStorage.removeItem("token");
       }
     }
   },
