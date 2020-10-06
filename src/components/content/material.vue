@@ -13,7 +13,7 @@
           }}</span>
         </p>
       </div>
-      <div style="padding:20px;flex:1">
+      <div style="padding:20px;flex:1;">
         <iframe
           v-if="cur.link.includes('pdf')"
           :src="cur.link"
@@ -29,6 +29,13 @@
           :src="cur.link"
           style="width:90%;height:auto;min-height:660px"
         />
+        <el-button
+          type="primary"
+          v-if="/zip/.test(cur.link)"
+          icon="el-icon-download"
+        >
+          <a style="color:#fff" :href="cur.link" @click.stop="">下载</a>
+        </el-button>
       </div>
     </div>
   </div>
@@ -38,7 +45,7 @@
 import { get, post, postForm, put } from "@/services/request";
 import urls from "@/services/urls";
 export default {
-  name: "Outline",
+  name: "Material",
   props: {
     pdfUrl: {
       type: String,
@@ -53,12 +60,12 @@ export default {
     };
   },
   mounted() {
-    this.getOutline();
+    this.getMaterial();
   },
   methods: {
-    async getOutline() {
+    async getMaterial() {
       const res = await get({
-        url: urls.outline
+        url: urls.material
       });
       if (!res) {
         return;

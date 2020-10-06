@@ -138,7 +138,7 @@ el-container {
   height: 100%;
 }
 .el-aside {
-  margin-left: -20px;
+  // margin-left: -20px;
   background-color: #ffffff;
   .el-menu {
     border-right: none;

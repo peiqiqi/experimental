@@ -20,5 +20,7 @@ export default {
   discussion_reply: `${front}/discussion/reply`,
   courseware_tree: `${front}/courseware/tree`,
   teacher: `${front}/teacher/list`,
-  work: `${front}/work/list`
+  work: `${front}/work/list`,
+  material: `${front}/material/list`,
+  outline: `${front}/outline/list`
 };

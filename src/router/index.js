@@ -7,6 +7,8 @@ import Media from "../components/content/Media";
 import announce from "../components/content/announce";
 import teacher from "../components/content/teacher";
 import outline from "../components/content/outline";
+import material from "../components/content/material";
+
 import testlist from "../components/content/testlist";
 import forum from "views/forum";
 import details from "views/details";
@@ -39,6 +41,8 @@ const router = new VueRouter({
         { path: "/announce", component: announce },
         { path: "/teacher", component: teacher },
         { path: "/outline", component: outline },
+        { path: "/material", component: material },
+
         { path: "/testlist", component: testlist },
         { path: "/forum", component: forum },
         { path: "details/:pid", name: "details", component: details },

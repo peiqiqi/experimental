@@ -2,7 +2,11 @@
   <div>
     <span class="top"><a href="#" class="topa">Top</a></span>
     <!--走马灯-->
-    <el-carousel :height="bannerHeight + 'px'" :interval="5000">
+    <el-carousel
+      style="margin-left:-1px"
+      :height="bannerHeight + 'px'"
+      :interval="5000"
+    >
       <el-carousel-item v-for="(item, index) in imgList" :key="index">
         <img :src="item.idView" alt="" />
       </el-carousel-item>
@@ -58,15 +62,25 @@
       </el-col>
     </el-row>
 
-    <el-footer class="footer">
+    <footer class="footer">
+      <div>友情链接</div>
       <div class="footrest">
-        <span>雨纷纷</span>
+        <a
+          href="https://www.icourse163.org/course/NJAU-1001754031"
+          target="_blank"
+          >生物统计学（南京农业大学）</a
+        >
         <el-divider direction="vertical"></el-divider>
-        <span>旧故里</span>
-        <el-divider direction="vertical"></el-divider>
-        <span>草木深</span>
+        <a
+          href="
+https://www.icourse163.org/spoc/course/SAU-1206799801?tid=1207776209"
+          target="_blank"
+          >田间试验与统计分析（四川农业大学）</a
+        >
+        <!-- <el-divider direction="vertical"></el-divider> -->
+        <!-- <span>草木深</span> -->
       </div>
-    </el-footer>
+    </footer>
   </div>
 </template>
 
@@ -200,6 +214,7 @@ export default {
     position: absolute;
     left: 3px;
     top: 20%;
+    z-index: 999;
     text-decoration: none; //去除下划线
   }
 }
@@ -219,9 +234,9 @@ h5 {
 }
 
 .el-carousel {
-  margin-top: -20px;
-  margin-left: -20px;
-  margin-right: -20px;
+  // margin-top: -20px;
+  // margin-left: -20px;
+  // margin-right: -20px;
   img {
     height: 105%;
   }
@@ -313,14 +328,22 @@ h1 {
 }
 
 .footer {
-  margin-left: -20px;
-  margin-right: -20px;
-  margin-top: 40px;
-  background-color: black;
-  color: white;
+  // margin-left: -20px;
+  // margin-right: -20px;
+  // margin-top: 40px;
+  // background-color: black;
+  // color: white;
   text-align: center;
+  line-height: 30px;
+  padding: 15px 0;
   .footrest {
-    margin-top: 15px;
+    // margin-top: 15px;
+    a {
+      color: #000;
+    }
+    a:hover {
+      color: #409eff;
+    }
   }
 }
 </style>

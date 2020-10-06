@@ -1,7 +1,7 @@
 <template>
   <div>
     <div style="display:flex;">
-      <div style="width:200px">
+      <div style="width:200px;padding-left:10px">
         <p
           style="cursor:pointer"
           @click="toggle(item)"

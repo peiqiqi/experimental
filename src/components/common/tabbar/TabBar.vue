@@ -1,6 +1,6 @@
 <template>
   <div>
-    <el-container class="home-container">
+    <div class="home-container">
       <!--    头部区域-->
       <el-header height="80px" style="z-index:4">
         <img src="@/assets/img/icon-华农白.png" alt="" />
@@ -8,11 +8,10 @@
           <span>试验统计学</span>
         </el-col>
         <el-col :span="12">
-          <el-menu
+          <!-- <el-menu
             :default-active="activeIndex2"
             :router="true"
             class="el-menu-demo"
-            mode="horizontal"
             background-color="#186164"
             text-color="#fff"
             active-text-color="#ffd04b"
@@ -24,7 +23,7 @@
             <el-menu-item index="/plist">课件</el-menu-item>
             <el-menu-item index="/testlist">测试与作业</el-menu-item>
             <el-menu-item index="/forum">讨论</el-menu-item>
-          </el-menu>
+          </el-menu> -->
         </el-col>
         <el-col :span="4">
           <span @click.stop="changeAvatar">
@@ -49,9 +48,12 @@
         <input id="avatar_upload" type="file" hidden />
       </el-header>
       <!--    页面主体区域-->
-      <el-main style="margin-top: 60px">
-        <router-view></router-view>
-      </el-main>
+      <div style="flex:1;display:flex;margin-top:80px">
+        <Header />
+        <div style="flex:1">
+          <router-view></router-view>
+        </div>
+      </div>
       <!--注册的对话框-->
       <el-dialog
         title="注册"
@@ -127,7 +129,7 @@
           <el-button type="primary" @click="login">确 定</el-button>
         </span>
       </el-dialog>
-    </el-container>
+    </div>
   </div>
 </template>
 
@@ -135,7 +137,7 @@
 import { post, postForm, put } from "@/services/request";
 import urls from "@/services/urls";
 import event from "@/utils/event";
-
+import Header from "../header";
 export default {
   name: "tabbar",
   data() {
@@ -281,6 +283,9 @@ export default {
         ]
       }
     };
+  },
+  components: {
+    Header
   },
   mounted() {
     event.on("show-login", () => {
@@ -436,7 +441,9 @@ export default {
 
 <style lang="less" scoped>
 .home-container {
-  height: 100%;
+  display: flex;
+  flex-direction: column;
+  min-height: 100vh;
 }
 .el-link {
   margin-left: 15px;
